@@ -363,20 +363,20 @@ def main():
         if st.session_state.cluster_labels is None:
             st.warning("⚠️ Please train the model first")
         else:
-            # Generate segment names
-            if st.button("🏷️ Generate Segment Names", type="primary"):
-                with st.spinner("Analyzing segments..."):
-                    for cluster_id in sorted(np.unique(st.session_state.cluster_labels)):
-                        name = suggest_segment_names(st.session_state.df, cluster_id)
-                        st.session_state.segment_names[cluster_id] = name
-                    st.success("✅ Segment names generated!")
-            
-            # Create profiles
+            # Create profiles first (adds Cluster column needed for naming)
             profiles_df, df_profiled = create_segment_profiles(
                 st.session_state.df,
                 st.session_state.cluster_labels,
                 st.session_state.feature_cols
             )
+
+            # Generate segment names
+            if st.button("🏷️ Generate Segment Names", type="primary"):
+                with st.spinner("Analyzing segments..."):
+                    for cluster_id in sorted(np.unique(st.session_state.cluster_labels)):
+                        name = suggest_segment_names(df_profiled, cluster_id)
+                        st.session_state.segment_names[cluster_id] = name
+                    st.success("✅ Segment names generated!")
             
             st.subheader("Segment Summary")
             summary_data = []

@@ -74,7 +74,12 @@ def suggest_segment_names(df_profiled, cluster_id):
     --------
     str: Suggested segment name
     """
+    if 'Cluster' not in df_profiled.columns:
+        return f"Segment {cluster_id}"
+
     cluster_data = df_profiled[df_profiled['Cluster'] == cluster_id]
+    if cluster_data.empty:
+        return f"Segment {cluster_id}"
     
     # Calculate key metrics
     spend_cols = [col for col in df_profiled.columns if col.startswith('Mnt')]
